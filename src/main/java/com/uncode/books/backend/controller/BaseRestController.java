@@ -27,31 +27,27 @@ import jakarta.validation.constraints.NotNull;
 
 public abstract class BaseRestController<E extends Identifiable<ID>, ID> {
 
-    protected BaseService<E, ID> service;
-
-    protected BaseRestController(BaseService<E, ID> service) {
-        this.service = service;
-    }
+    protected abstract BaseService<E, ID> getService();
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public E post(@Valid @RequestBody E entity) throws ServiceException {
-        return service.create(entity);
+        return getService().create(entity);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public Page<E> get(Pageable pageable) {
-        return service.findAll(pageable);
+        return getService().findAll(pageable);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public E get(ID id) throws NotFoundException {
-        return service.findById(id);
+        return getService().findById(id);
     }
 
     @PutMapping("/{id}")
@@ -60,13 +56,13 @@ public abstract class BaseRestController<E extends Identifiable<ID>, ID> {
     public E put(@NotNull @PathVariable ID id, @Valid @RequestBody E entity)
             throws ServiceException, NotFoundException {
         entity.setId(id);
-        return service.update(entity);
+        return getService().update(entity);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@NotNull @PathVariable ID id) throws NotFoundException {
-        service.delete(id);
+        getService().delete(id);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
