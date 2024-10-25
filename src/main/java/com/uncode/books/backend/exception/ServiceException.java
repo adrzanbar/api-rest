@@ -1,4 +1,4 @@
-package com.uncode.books.backend.service;
+package com.uncode.books.backend.exception;
 
 public class ServiceException extends Exception {
 

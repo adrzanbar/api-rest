@@ -8,8 +8,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -18,7 +16,6 @@ import org.hibernate.envers.Audited;
 
 @Entity
 @SoftDelete
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"calle", "numero"}))
 @Data
 @Audited
 public class Domicilio implements Identifiable<UUID> {

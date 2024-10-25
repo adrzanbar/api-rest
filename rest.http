@@ -2,8 +2,8 @@ POST http://localhost:8080/domicilios HTTP/1.1
 Content-Type: application/json
 
 {
-    "calle": "22321",
-    "numero": 1234
+    "calle": "",
+    "numero": 0
 }
 
 ###
@@ -26,4 +26,4 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:8080/domicilios/576e1f0e-3c2e-4145-b741-1b683c7e9ced
+DELETE http://localhost:8080/domicilios/d7a046c4-d906-460d-af39-2544c47785de
