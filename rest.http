@@ -1,0 +1,29 @@
+POST http://localhost:8080/domicilios HTTP/1.1
+Content-Type: application/json
+
+{
+    "calle": "22321",
+    "numero": 1234
+}
+
+###
+
+GET http://localhost:8080/domicilios
+
+###
+
+GET http://localhost:8080/domicilios/476c85b6-0064-48a8-8bcf-b6f481afd010
+
+###
+
+PUT http://localhost:8080/domicilios/576e1f0e-3c2e-4145-b741-1b683c7e9ced HTTP/1.1
+Content-Type: application/json
+
+{
+    "calle": "223",
+    "numero": 2
+}
+
+###
+
+DELETE http://localhost:8080/domicilios/576e1f0e-3c2e-4145-b741-1b683c7e9ced
