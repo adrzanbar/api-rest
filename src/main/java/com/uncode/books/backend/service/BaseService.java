@@ -5,8 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.uncode.books.backend.entity.Identifiable;
 import com.uncode.books.backend.exception.ServiceException;
-import com.uncode.books.backend.model.entity.Identifiable;
 
 import jakarta.transaction.Transactional;
 
@@ -14,17 +14,20 @@ public abstract class BaseService<E extends Identifiable<ID>, ID> {
 
     protected abstract JpaRepository<E, ID> getRepository();
 
+    protected abstract void validate(E entity) throws ServiceException;
+
     @Transactional
     public E create(E entity) throws ServiceException {
+        validate(entity);
         entity.setId(null);
         return getRepository().save(entity);
     }
 
-    public Page<E> findAll(Pageable pageable) {
+    public Page<E> read(Pageable pageable) {
         return getRepository().findAll(pageable);
     }
 
-    public E findById(ID id) throws NotFoundException {
+    public E read(ID id) throws NotFoundException {
         return getRepository().findById(id).orElseThrow(
                 () -> new NotFoundException());
     }
@@ -32,6 +35,7 @@ public abstract class BaseService<E extends Identifiable<ID>, ID> {
     @Transactional
     public E update(E entity) throws ServiceException, NotFoundException {
         if (getRepository().existsById(entity.getId())) {
+            validate(entity);
             return getRepository().save(entity);
         } else {
             throw new NotFoundException();

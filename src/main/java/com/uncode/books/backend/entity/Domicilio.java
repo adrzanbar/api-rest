@@ -1,4 +1,4 @@
-package com.uncode.books.backend.model.entity;
+package com.uncode.books.backend.entity;
 
 import java.util.UUID;
 

@@ -1,6 +1,7 @@
 package com.uncode.books.backend.controller;
 
 import java.util.List;
+import java.util.HashMap;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
@@ -18,12 +19,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.uncode.books.backend.entity.Identifiable;
 import com.uncode.books.backend.exception.ServiceException;
-import com.uncode.books.backend.model.entity.Identifiable;
 import com.uncode.books.backend.service.BaseService;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 
 public abstract class BaseRestController<E extends Identifiable<ID>, ID> {
 
@@ -31,29 +31,22 @@ public abstract class BaseRestController<E extends Identifiable<ID>, ID> {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ResponseBody
     public E post(@Valid @RequestBody E entity) throws ServiceException {
         return getService().create(entity);
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     public Page<E> get(Pageable pageable) {
-        return getService().findAll(pageable);
+        return getService().read(pageable);
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public E get(ID id) throws NotFoundException {
-        return getService().findById(id);
+    public E get(@PathVariable ID id) throws NotFoundException {
+        return getService().read(id);
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public E put(@NotNull @PathVariable ID id, @Valid @RequestBody E entity)
+    public E put(@PathVariable ID id, @Valid @RequestBody E entity)
             throws ServiceException, NotFoundException {
         entity.setId(id);
         return getService().update(entity);
@@ -61,7 +54,7 @@ public abstract class BaseRestController<E extends Identifiable<ID>, ID> {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@NotNull @PathVariable ID id) throws NotFoundException {
+    public void delete(@PathVariable ID id) throws NotFoundException {
         getService().delete(id);
     }
 
@@ -69,9 +62,11 @@ public abstract class BaseRestController<E extends Identifiable<ID>, ID> {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public List<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return e.getBindingResult().getFieldErrors().stream()
-                .map(FieldError::getDefaultMessage)
-                .toList();
+        var map = new HashMap<String, Object>();
+        map.put("error", "Los datos ingresados no son válidos");
+        e.getBindingResult().getFieldErrors().stream().forEach(
+                (FieldError fe) -> map.put(fe.getField(), fe.getDefaultMessage()));
+        return List.of(map.toString());
     }
 
     @ExceptionHandler(ServiceException.class)
@@ -93,6 +88,10 @@ public abstract class BaseRestController<E extends Identifiable<ID>, ID> {
     @ResponseBody
     public String handleException(Exception e) {
         return "Ocurrió un error inesperado";
+
+        // Do not expose the exception details to the client in a production environment
+        // e.printStackTrace();
+        // return e.getClass().getSimpleName();
     }
 
 }
