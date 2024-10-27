@@ -2,8 +2,8 @@ POST http://localhost:8080/domicilios HTTP/1.1
 Content-Type: application/json
 
 {
-    "calle": "1",
-    "numero": 1
+    "calle": "",
+    "numero": 0
 }
 
 ###
@@ -16,7 +16,7 @@ GET http://localhost:8080/domicilios/f4877513-00a4-4066-93f4-11de0b30dc5c
 
 ###
 
-PUT http://localhost:8080/domicilios/f4877513-00a4-4066-93f4-11de0b30dc5c HTTP/1.1
+PUT http://localhost:8080/domicilios/ddf29576-66d4-4d9d-9ac1-4e647441cf8d HTTP/1.1
 Content-Type: application/json
 
 {

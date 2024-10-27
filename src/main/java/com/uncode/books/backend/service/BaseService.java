@@ -1,11 +1,11 @@
 package com.uncode.books.backend.service;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.uncode.books.backend.entity.Identifiable;
+import com.uncode.books.backend.exception.NotFoundException;
 import com.uncode.books.backend.exception.ServiceException;
 
 import jakarta.transaction.Transactional;
@@ -17,7 +17,7 @@ public abstract class BaseService<E extends Identifiable<ID>, ID> {
     protected abstract void validate(E entity) throws ServiceException;
 
     @Transactional
-    public E create(E entity) throws ServiceException {
+    public E create(E entity) {
         validate(entity);
         entity.setId(null);
         return getRepository().save(entity);
@@ -27,9 +27,9 @@ public abstract class BaseService<E extends Identifiable<ID>, ID> {
         return getRepository().findAll(pageable);
     }
 
-    public E read(ID id) throws NotFoundException {
+    public E read(ID id) {
         return getRepository().findById(id).orElseThrow(
-                () -> new NotFoundException());
+                () -> new NotFoundException("No se encontró el registro con el identificador " + id));
     }
 
     @Transactional
@@ -38,7 +38,7 @@ public abstract class BaseService<E extends Identifiable<ID>, ID> {
             validate(entity);
             return getRepository().save(entity);
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("No se encontró el registro con el identificador " + entity.getId());
         }
     }
 
@@ -47,7 +47,7 @@ public abstract class BaseService<E extends Identifiable<ID>, ID> {
         if (getRepository().existsById(id)) {
             getRepository().deleteById(id);
         } else {
-            throw new NotFoundException();
+            throw new NotFoundException("No se encontró el registro con el identificador " + id);
         }
     }
 
